@@ -87,4 +87,4 @@ module.exports = {
       message.reply("There was an error creating the kiss image.");
     }
   }
-};￼Enter
+};
