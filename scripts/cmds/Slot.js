@@ -76,4 +76,4 @@ function getSpinResultMessage(slot1, slot2, slot3, winnings, getLang) {
   } else {
     return getLang("lose_message", -winnings) + `\[ ${slot1} | ${slot2} | ${slot3} ]`;
   }
-}￼Enter
+}
