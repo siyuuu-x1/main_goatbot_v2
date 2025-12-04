@@ -84,4 +84,4 @@ module.exports = {
       return api.sendMessage("❌ An error occurred! Please try again later.", event.threadID, event.messageID);
     }
   }
-};￼Enter
+};
