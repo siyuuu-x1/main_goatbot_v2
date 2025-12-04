@@ -90,4 +90,4 @@ Made with ❤️ by Siyuu.`;
       api.setMessageReaction("❌️", event.messageID, () => {}, true);
     }
   }
-};￼Enter
+};
