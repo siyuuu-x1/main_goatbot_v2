@@ -114,4 +114,4 @@ module.exports = {
       if (msg.includes(text)) return react(custom[text]);
     }
   }
-};￼Enter
+};
