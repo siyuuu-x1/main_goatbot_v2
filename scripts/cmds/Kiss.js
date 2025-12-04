@@ -109,4 +109,4 @@ module.exports = {
       return message.reply("❌ | Couldn't create the kiss image, please try again later.");
     }
   }
-};￼Enter
+};
