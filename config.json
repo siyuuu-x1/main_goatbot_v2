@@ -12,7 +12,7 @@
   "antiInbox": false,
   "language": "en",
   "notesLanguage": "change to your language with ISO 639-1 code, available languages: vi (Vietnamese), en (English)",
-  "nickNameBot": "‌♡𝗺𝗮𝗶𝗸𝗼♡",
+  "nickNameBot": "‌",
   "prefix": "/",
   "adminOnly": {
     "enable": false,
@@ -131,7 +131,7 @@
     "updatePresence": true,
     "listenTyping": true,
     "logLevel": "error",
-    "selfListen": false,
+    "selfListen": true,
     "selfListenEvent": true,
     "autoMarkDelivery": false,
     "autoReconnect": false,
