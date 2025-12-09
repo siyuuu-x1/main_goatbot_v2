@@ -13,7 +13,7 @@ module.exports = {
     author: "dipto",
     countDown: 5,
     role: 0,
-    noPrefix: true,
+    noPrefix: false,
     description: {
       en: "Download audio from YouTube"
     },
@@ -99,3 +99,40 @@ module.exports = {
     if (body && triggers.some(trigger => body.startsWith(trigger))) {
       const slicedArgs = body.split(" ").slice(1);
       event.body = slicedArgs.join(" ");
+      await module.exports.onStart({
+        api,
+        args: slicedArgs,
+        event,
+        commandName,
+        message
+      });
+    }
+  }
+};
+
+async function dipto(url, pathName) {
+  try {
+    const response = (await axios.get(url, {
+      responseType: "arraybuffer"
+    })).data;
+
+    fs.writeFileSync(pathName, Buffer.from(response));
+    return fs.createReadStream(pathName);
+  }
+  catch (err) {
+    throw err;
+  }
+}
+
+async function diptoSt(url, pathName) {
+  try {
+    const response = await axios.get(url, {
+      responseType: "stream"
+    });
+    response.data.path = pathName;
+    return response.data;
+  }
+  catch (err) {
+    throw err;
+  }
+}
