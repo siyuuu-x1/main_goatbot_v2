@@ -133,7 +133,7 @@ module.exports.onStart = async ({ api, event, args, usersData }) => {
         }
 
         // Default reply
-        const d = (await axios.get(`${link}?text=${aryan}&senderID=${uid}&font=1`)).data.reply;
+        const d = (await axios.get(`${link}?text=${aryan}&senderID=${uid}`)).data.reply;
         api.sendMessage(d, event.threadID, (error, info) => {
             global.GoatBot.onReply.set(info.messageID, {
                 commandName: this.config.name,
@@ -154,7 +154,7 @@ module.exports.onStart = async ({ api, event, args, usersData }) => {
 module.exports.onReply = async ({ api, event, Reply }) => {
     try {
         if (event.type == "message_reply") {
-            const a = (await axios.get(`${await baseApiUrl()}/baby?text=${encodeURIComponent(event.body?.toLowerCase())}&senderID=${event.senderID}&font=1`)).data.reply;
+            const a = (await axios.get(`${await baseApiUrl()}/baby?text=${encodeURIComponent(event.body?.toLowerCase())}&senderID=${event.senderID}`)).data.reply;
             await api.sendMessage(a, event.threadID, (error, info) => {
                 global.GoatBot.onReply.set(info.messageID, {
                     commandName: this.config.name,
@@ -208,7 +208,7 @@ module.exports.onChat = async ({ api, event, message }) => {
             body.startsWith("jan") || body.startsWith("babu") || body.startsWith("janu")) {
 
             const arr = body.replace(/^\S+\s*/, "");
-            const randomReplies = ["😚", "Yes 😀, I am here", "What's up?", "Bolo jaan ki korte panmr jonno"];
+            const randomReplies = ["😎", "Yes 😀, I am here", "What's up?", "Bolo jaan ki korte pari tmr jonno"];
 
             if (!arr) {
                 return api.sendMessage(randomReplies[Math.floor(Math.random() * randomReplies.length)], event.threadID, (error, info) => {
@@ -222,7 +222,7 @@ module.exports.onChat = async ({ api, event, message }) => {
                 }, event.messageID);
             }
 
-            const a = (await axios.get(`${await baseApiUrl()}/baby?text=${encodeURIComponent(arr)}&senderID=${event.senderID}&font=1`)).data.reply;
+            const a = (await axios.get(`${await baseApiUrl()}/baby?text=${encodeURIComponent(arr)}&senderID=${event.senderID}`)).data.reply;
             return api.sendMessage(a, event.threadID, (error, info) => {
                 global.GoatBot.onReply.set(info.messageID, {
                     commandName: "bby",
