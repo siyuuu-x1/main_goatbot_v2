@@ -1,324 +1,150 @@
-const fontPath = process.cwd() + "/scripts/cmds/canvas/fonts/Rounded.otf";
-const {
-    createCanvas,
-    loadImage,
-    registerFont
-} = require('canvas');
-const fs = require('fs-extra');
-const path = require('path');
-
-registerFont(fontPath, {
-    family: 'CoreSansAR'
-});
-
-async function createWelcomeCanvas(gcImg, img1, img2, userName, userNumber, threadName, potato) {
-    const width = 1200;
-    const height = 600;
-    const canvas = createCanvas(width, height);
-    const ctx = canvas.getContext('2d');
-    ctx.fillStyle = '#0a0a0a';
-    ctx.fillRect(0, 0, width, height);
-
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
-    ctx.lineWidth = 2;
-    for (let i = -height; i < width; i += 60) {
-        ctx.beginPath();
-        ctx.moveTo(i, 0);
-        ctx.lineTo(i + height, height);
-        ctx.stroke();
-    }
-    const lightGradient = ctx.createLinearGradient(0, 0, width, height);
-    lightGradient.addColorStop(0, 'rgba(255, 255, 255, 0.02)');
-    lightGradient.addColorStop(0.5, 'rgba(255, 255, 255, 0.05)');
-    lightGradient.addColorStop(1, 'rgba(255, 255, 255, 0.02)');
-    ctx.fillStyle = lightGradient;
-    ctx.fillRect(0, 0, width, height);
-    const squares = [{
-        x: 50,
-        y: 50,
-        size: 80,
-        rotation: 15
-    },
-        {
-            x: 1100,
-            y: 80,
-            size: 60,
-            rotation: -20
-        },
-        {
-            x: 150,
-            y: 500,
-            size: 50,
-            rotation: 30
-        },
-        {
-            x: 1050,
-            y: 480,
-            size: 70,
-            rotation: -15
-        },
-        {
-            x: 900,
-            y: 30,
-            size: 40,
-            rotation: 45
-        },
-        {
-            x: 200,
-            y: 150,
-            size: 35,
-            rotation: -30
-        },
-        {
-            x: 400,
-            y: 80,
-            size: 45,
-            rotation: 60
-        },
-        {
-            x: 700,
-            y: 520,
-            size: 55,
-            rotation: -40
-        },
-        {
-            x: 950,
-            y: 250,
-            size: 38,
-            rotation: 25
-        },
-        {
-            x: 300,
-            y: 350,
-            size: 42,
-            rotation: -50
-        }];
-
-    squares.forEach(sq => {
-        ctx.save();
-        ctx.translate(sq.x + sq.size / 2, sq.y + sq.size / 2);
-        ctx.rotate((sq.rotation * Math.PI) / 180);
-
-        const sqGradient = ctx.createLinearGradient(-sq.size / 2, -sq.size / 2, sq.size / 2, sq.size / 2);
-        sqGradient.addColorStop(0, 'rgba(249, 115, 22, 0.3)');
-        sqGradient.addColorStop(1, 'rgba(234, 88, 12, 0.1)');
-
-        ctx.fillStyle = sqGradient;
-        ctx.fillRect(-sq.size / 2, -sq.size / 2, sq.size, sq.size);
-
-        ctx.strokeStyle = 'rgba(249, 115, 22, 0.5)';
-        ctx.lineWidth = 2;
-        ctx.strokeRect(-sq.size / 2, -sq.size / 2, sq.size, sq.size);
-
-        ctx.restore();
-    });
-    const circles = [{
-        x: 250,
-        y: 250,
-        radius: 30,
-        alpha: 0.15
-    },
-        {
-            x: 850,
-            y: 150,
-            radius: 25,
-            alpha: 0.12
-        },
-        {
-            x: 600,
-            y: 50,
-            radius: 20,
-            alpha: 0.1
-        },
-        {
-            x: 100,
-            y: 350,
-            radius: 35,
-            alpha: 0.18
-        },
-        {
-            x: 1000,
-            y: 380,
-            radius: 28,
-            alpha: 0.14
-        },
-        {
-            x: 450,
-            y: 480,
-            radius: 22,
-            alpha: 0.11
-        }];
-
-    circles.forEach(circ => {
-        ctx.beginPath();
-        ctx.arc(circ.x, circ.y, circ.radius, 0, Math.PI * 2);
-        const circGradient = ctx.createRadialGradient(circ.x, circ.y, 0, circ.x, circ.y, circ.radius);
-        circGradient.addColorStop(0, `rgba(249, 115, 22, ${circ.alpha})`);
-        circGradient.addColorStop(1, 'rgba(234, 88, 12, 0)');
-        ctx.fillStyle = circGradient;
-        ctx.fill();
-
-        ctx.strokeStyle = `rgba(249, 115, 22, ${circ.alpha * 2})`;
-        ctx.lineWidth = 1.5;
-        ctx.stroke();
-    });
-    const triangles = [{
-        x: 550,
-        y: 150,
-        size: 40,
-        rotation: 0
-    },
-        {
-            x: 180,
-            y: 420,
-            size: 35,
-            rotation: 180
-        },
-        {
-            x: 1080,
-            y: 320,
-            size: 38,
-            rotation: 90
-        },
-        {
-            x: 380,
-            y: 200,
-            size: 32,
-            rotation: -45
-        }];
-
-    triangles.forEach(tri => {
-        ctx.save();
-        ctx.translate(tri.x, tri.y);
-        ctx.rotate((tri.rotation * Math.PI) / 180);
-
-        ctx.beginPath();
-        ctx.moveTo(0, -tri.size / 2);
-        ctx.lineTo(-tri.size / 2, tri.size / 2);
-        ctx.lineTo(tri.size / 2, tri.size / 2);
-        ctx.closePath();
-
-        const triGradient = ctx.createLinearGradient(-tri.size / 2, 0, tri.size / 2, 0);
-        triGradient.addColorStop(0, 'rgba(249, 115, 22, 0.2)');
-        triGradient.addColorStop(1, 'rgba(234, 88, 12, 0.1)');
-        ctx.fillStyle = triGradient;
-        ctx.fill();
-
-        ctx.strokeStyle = 'rgba(249, 115, 22, 0.4)';
-        ctx.lineWidth = 2;
-        ctx.stroke();
-
-        ctx.restore();
-    });
-
-    async function drawCircularImage(imageSrc, x, y, radius, borderColor, borderWidth = 5) {
-        try {
-            const image = await loadImage(imageSrc);
-            ctx.shadowColor = borderColor;
-            ctx.shadowBlur = 15;
-            ctx.beginPath();
-            ctx.arc(x, y, radius + borderWidth, 0, Math.PI * 2);
-            ctx.fillStyle = borderColor;
-            ctx.fill();
-            ctx.shadowBlur = 0;
-            ctx.beginPath();
-            ctx.arc(x, y, radius + borderWidth, 0, Math.PI * 2);
-            ctx.fillStyle = borderColor;
-            ctx.fill();
-            ctx.save();
-            ctx.beginPath();
-            ctx.arc(x, y, radius, 0, Math.PI * 2);
-            ctx.closePath();
-            ctx.clip();
-            ctx.drawImage(image, x - radius, y - radius, radius * 2, radius * 2);
-            ctx.restore();
-        } catch (err) {
-            ctx.beginPath();
-            ctx.arc(x, y, radius, 0, Math.PI * 2);
-            ctx.fillStyle = '#1f1f1f';
-            ctx.fill();
-        }
-    }
-    await drawCircularImage(img2, width - 120, 100, 55, '#f97316');
-    ctx.font = 'bold 20px CoreSansAR, sans-serif';
-    ctx.fillStyle = '#f97316';
-    ctx.textAlign = 'right';
-    ctx.fillText('Added by '+potato, width - 190, 105);
-    await drawCircularImage(img1, 120, height - 100, 55, '#ea580c');
-    ctx.font = 'bold 24px CoreSansAR, sans-serif';
-    ctx.fillStyle = '#ffffff';
-    ctx.textAlign = 'left';
-    ctx.fillText(userName, 190, height - 95);
-    await drawCircularImage(gcImg, width / 2, 200, 90, '#f97316', 6);
-    ctx.font = 'bold 42px CoreSansAR, sans-serif';
-    ctx.fillStyle = '#ffffff';
-    ctx.textAlign = 'center';
-    ctx.fillText(threadName, width / 2, 335);
-    ctx.font = 'bold 56px CoreSansAR, sans-serif';
-    const nameGradient = ctx.createLinearGradient(width / 2 - 200, 0, width / 2 + 200, 0);
-    nameGradient.addColorStop(0, '#f97316');
-    nameGradient.addColorStop(1, '#ea580c');
-    ctx.fillStyle = nameGradient;
-    ctx.fillText('WELCOME', width / 2, 410);
-    ctx.strokeStyle = 'rgba(249, 115, 22, 0.4)';
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(width / 2 - 180, 430);
-    ctx.lineTo(width / 2 + 180, 430);
-    ctx.stroke();
-    ctx.font = 'bold 26px sans-serif';
-    ctx.fillStyle = '#a0a0a0';
-    ctx.textAlign = 'center';
-    ctx.fillText(`You are the ${userNumber}th member`, width / 2, 480);
-
-    return canvas.createPNGStream();
-}
-
+const { getTime, drive } = global.utils;
+if (!global.temp.welcomeEvent)
+	global.temp.welcomeEvent = {};
+// Siyam your dad's 
 module.exports = {
-    config: {
-        name: "welcome",
-        version: "1.1",
-        author: "Allou Mohamed",
-        category: "events"
-    },
+	config: {
+		name: "welcome",
+		version: "1.7",
+		author: "siyuu",
+		category: "events"
+	},
 
-    onStart: async ({
-        threadsData, event, message, usersData
-    }) => {
-        const type = "log:subscribe";
-        if (event.logMessageType != type) return;
-        
-        try {
-            await threadsData.refreshInfo(event.threadID);
-            const threadsInfo = await threadsData.get(event.threadID);
-            const gcImg = threadsInfo.imageSrc;
-            const threadName = threadsInfo.threadName;
-            const joined = event.logMessageData.addedParticipants[0].userFbId;
-            const by = event.author;
-            const img1 = await usersData.getAvatarUrl(joined);
-            const img2 = await usersData.getAvatarUrl(by);
-            const usernumber = threadsInfo.members?.length || 1;
-            const userName = event.logMessageData.addedParticipants[0].fullName;
-            const authorN = await usersData.getName(by);
-            
-            const welcomeImage = await createWelcomeCanvas(gcImg, img1, img2, userName, usernumber, threadName, authorN);
-            
-            const imagePath = path.join(__dirname, '../cmds/', global.utils.randomString(4) + ".png");
-            const writeStream = fs.createWriteStream(imagePath);
-            welcomeImage.pipe(writeStream);
-            
-            await new Promise((resolve) => {
-                writeStream.on('finish', resolve);
-            });
+	langs: {
 
-            await message.send({
-                attachment: fs.createReadStream(imagePath)
-            });
-            
-            fs.unlinkSync(imagePath);
-        } catch (error) {
-            console.error("❌ [WELCOME] Error:", error.message);
-            console.error(error.stack);
-        }
-    }
+		en: {
+			session1: "morning",
+			session2: "noon",
+			session3: "afternoon",
+			session4: "evening",
+			welcomeMessage: "Thank you for inviting me to the group!\nBot prefix: %1\nTo view the list of commands, please enter: %1help",
+			multiple1: "you",
+			multiple2: "you guys",
+			defaultWelcomeMessage: `✧ Hello {userName}.\n✧ Welcome {multiple} to {boxName}\n✧ Have a nice {session} 😊`
+		}
+	},
+
+	onStart: async ({ threadsData, message, event, api, getLang }) => {
+		if (event.logMessageType == "log:subscribe")
+			return async function () {
+				const hours = getTime("HH");
+				const { threadID } = event;
+				const { nickNameBot } = global.GoatBot.config;
+				const prefix = global.utils.getPrefix(threadID);
+				const dataAddedParticipants = event.logMessageData.addedParticipants;
+				// if new member is bot
+				if (dataAddedParticipants.some((item) => item.userFbId == api.getCurrentUserID())) {
+					if (nickNameBot)
+						api.changeNickname(nickNameBot, threadID, api.getCurrentUserID());
+					// share owner's contact when bot is added (fallbacks to prior ID)
+					const ownerContactId =
+						(global.GoatBot && global.GoatBot.config && global.GoatBot.config.ownerID) ||
+						(global.config && (global.config.BOTOWNERID || global.config.BOTOWNER)) ||
+						"100065445284007";
+					const welcomeText = getLang("welcomeMessage", prefix);
+					try {
+						// follow join.js pattern: api.shareContact(message, contactId, threadID)
+						api.shareContact(welcomeText, String(ownerContactId), threadID);
+					} catch (e) {
+						// fallback to send if shareContact fails
+						message.send(welcomeText);
+					}
+					return;
+				}
+				// if new member:
+				if (!global.temp.welcomeEvent[threadID])
+					global.temp.welcomeEvent[threadID] = {
+						joinTimeout: null,
+						dataAddedParticipants: []
+					};
+
+				// push new member to array
+				global.temp.welcomeEvent[threadID].dataAddedParticipants.push(...dataAddedParticipants);
+				// if timeout is set, clear it
+				clearTimeout(global.temp.welcomeEvent[threadID].joinTimeout);
+
+				// set new timeout
+				global.temp.welcomeEvent[threadID].joinTimeout = setTimeout(async function () {
+					const threadData = await threadsData.get(threadID);
+					if (threadData.settings.sendWelcomeMessage == false)
+						return;
+					const dataAddedParticipants = global.temp.welcomeEvent[threadID].dataAddedParticipants;
+					const dataBanned = threadData.data.banned_ban || [];
+					const threadName = threadData.threadName;
+					const userName = [],
+						mentions = [];
+					let multiple = false;
+
+					if (dataAddedParticipants.length > 1)
+						multiple = true;
+
+					for (const user of dataAddedParticipants) {
+						if (dataBanned.some((item) => item.id == user.userFbId))
+							continue;
+						userName.push(user.fullName);
+						mentions.push({
+							tag: user.fullName,
+							id: user.userFbId
+						});
+					}
+					// {userName}:   name of new member
+					// {multiple}:
+					// {boxName}:    name of group
+					// {threadName}: name of group
+					// {session}:    session of day
+					if (userName.length == 0) return;
+					let { welcomeMessage = getLang("defaultWelcomeMessage") } =
+						threadData.data;
+					const form = {
+						mentions: welcomeMessage.match(/\{userNameTag\}/g) ? mentions : null
+					};
+					welcomeMessage = welcomeMessage
+						.replace(/\{userName\}|\{userNameTag\}/g, userName.join(", "))
+						.replace(/\{boxName\}|\{threadName\}/g, threadName)
+						.replace(
+							/\{multiple\}/g,
+							multiple ? getLang("multiple2") : getLang("multiple1")
+						)
+						.replace(
+							/\{session\}/g,
+							hours <= 10
+								? getLang("session1")
+								: hours <= 12
+									? getLang("session2")
+									: hours <= 18
+										? getLang("session3")
+										: getLang("session4")
+						);
+
+					form.body = welcomeMessage;
+
+					// If a single user joined, follow join.js behavior and use shareContact
+					if (dataAddedParticipants.length === 1) {
+						const newParticipant = dataAddedParticipants[0];
+						try {
+							// share contact with the single new participant (join.js pattern)
+							api.shareContact(welcomeMessage, String(newParticipant.userFbId), threadID);
+						} catch (e) {
+							// fallback to sending a regular message if shareContact fails
+							message.send(form);
+						}
+						delete global.temp.welcomeEvent[threadID];
+						return;
+					}
+
+					if (threadData.data.welcomeAttachment) {
+						const files = threadData.data.welcomeAttachment;
+						const attachments = files.reduce((acc, file) => {
+							acc.push(drive.getFile(file, "stream"));
+							return acc;
+						}, []);
+						form.attachment = (await Promise.allSettled(attachments))
+							.filter(({ status }) => status == "fulfilled")
+							.map(({ value }) => value);
+					}
+					message.send(form);
+					delete global.temp.welcomeEvent[threadID];
+				}, 1500);
+			};
+	}
 };
