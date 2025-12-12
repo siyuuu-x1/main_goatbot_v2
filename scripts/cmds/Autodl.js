@@ -1,6 +1,9 @@
 const axios = require("axios");
 const fs = require("fs-extra");
 const path = require("path");
+const { pipeline } = require("stream");
+const { promisify } = require("util");
+const streamPipeline = promisify(pipeline);
 
 const supportedDomains = [
   "facebook.com", "fb.watch",
@@ -21,7 +24,7 @@ const supportedDomains = [
 module.exports = {
   config: {
     name: "autodl",
-    version: "2.0",
+    version: "2.1",
     author: "Saimx69x",
     role: 0,
     shortDescription: "All-in-one video/media downloader",
@@ -32,16 +35,14 @@ module.exports = {
   },
 
   onStart: async function({ api, event }) {
-    api.sendMessage(
-      "📥 Send a video/media link (https://) from any supported site (YouTube, Facebook, TikTok, Instagram, Likee, CapCut, Spotify, Terabox, Twitter, Google Drive, SoundCloud, NDown, Pinterest, etc.) to auto-download.",
-      event.threadID,
-      event.messageID
-    );
+    const message = 
+`📥 Send a video/media link (https://) from any supported site to auto-download.
+Supported platforms: YouTube, Facebook, TikTok, Instagram, Likee, CapCut, Spotify, Terabox, Twitter, Google Drive, SoundCloud, NDown, Pinterest, etc.`;
+    api.sendMessage(message, event.threadID, event.messageID);
   },
 
   onChat: async function({ api, event }) {
     const content = event.body ? event.body.trim() : "";
-    if (content.toLowerCase().startsWith("auto")) return;
     if (!content.startsWith("https://")) return;
     if (!supportedDomains.some(domain => content.includes(domain))) return;
 
@@ -58,27 +59,25 @@ module.exports = {
       if (!mediaURL) throw new Error("Media not found");
 
       const extension = mediaURL.includes(".mp3") ? "mp3" : "mp4";
-      const buffer = (await axios.get(mediaURL, { responseType: "arraybuffer" })).data;
       const filePath = path.join(__dirname, "cache", `auto_media_${Date.now()}.${extension}`);
 
       await fs.ensureDir(path.dirname(filePath));
-      fs.writeFileSync(filePath, Buffer.from(buffer));
+
+      // ⚡ High-speed download
+      const downloadStream = (await axios.get(mediaURL, { responseType: "stream" })).data;
+      await streamPipeline(downloadStream, fs.createWriteStream(filePath));
 
       api.setMessageReaction("✅️", event.messageID, () => {}, true);
-      
+
       const domain = supportedDomains.find(d => content.includes(d)) || "Unknown Platform";
       const platformName = domain.replace(/(\.com|\.app|\.video|\.net)/, "").toUpperCase();
 
       const infoCard = 
-`━━━━━━━━━━━━━━
-𝐌𝐞𝐝𝐢𝐚 𝐃𝐨𝐰𝐧𝐥𝐨𝐚𝐝𝐞𝐝 ✅
-╭─╼━━━━━━━━╾─╮
-│ Title      : ${mediaTitle}
-│ Platform   : ${platformName}
-│ Status     : Success
-╰─━━━━━━━━━╾─╯
-━━━━━━━━━━━━━━
-Made with ❤️ by Siyuu.`;
+`📥 𝗔𝘂𝘁𝗼-𝗗𝗼𝘄𝗻𝗹𝗼𝗮𝗱 ❗
+🎯 Title    : ${mediaTitle}
+🌐 Platform : ${platformName}
+✅ Status   : Completed
+⚙️ Fixed By : Siyuu`;
 
       api.sendMessage(
         { body: infoCard, attachment: fs.createReadStream(filePath) },
@@ -86,7 +85,8 @@ Made with ❤️ by Siyuu.`;
         () => fs.unlinkSync(filePath),
         event.messageID
       );
-    } catch {
+    } catch (err) {
+      console.error(err);
       api.setMessageReaction("❌️", event.messageID, () => {}, true);
     }
   }
