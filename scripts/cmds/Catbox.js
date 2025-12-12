@@ -8,7 +8,7 @@ module.exports = {
     name: "catbox",
     aliases: ["cb"],
     version: "1.0",
-    author: "Saimx69x",
+    author: "Siyuu",
     role: 0,
     category: "utility",
     Description: "Upload media to Catbox and return the link.",
