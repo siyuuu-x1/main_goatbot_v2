@@ -5,7 +5,7 @@ module.exports = {
 				config: {
 								name: "prefix",
 								version: "1.4",
-								author: "NTKhang & NeoKEX",
+								author: "NTKhang & NeoKEX & siyuuu",
 								countDown: 5,
 								role: 0,
 								description: "Thay đổi dấu lệnh của bot trong box chat của bạn hoặc cả hệ thống bot (chỉ admin bot)",
@@ -36,7 +36,7 @@ module.exports = {
 												confirmThisThread: "Vui lòng thả cảm xúc bất kỳ vào tin nhắn này để xác nhận thay đổi prefix trong nhóm chat của bạn",
 												successGlobal: "Đã thay đổi prefix hệ thống bot thành: %1",
 												successThisThread: "Đã thay đổi prefix trong nhóm chat của bạn thành: %1",
-												myPrefix: "👋 Hey %1, did you ask for my prefix?\n➥ 🌐 Global: %2\n➥ 💬 This Chat: %3\nI'm %4 at your service 🫡"
+												myPrefix: "👋 Hey %1, did you ask for my prefix?\n➥ 🌐 Global: %2\n➥ 💬 This Chat: %3\nI'm %4 iam 𝗺𝗮𝗶𝗸𝗼 , nice to meet you 1% "
 								},
 								en: {
 												reset: "Your prefix reset to default: %1",
@@ -45,7 +45,7 @@ module.exports = {
 												confirmThisThread: "Please react to this message to confirm change prefix in your box chat",
 												successGlobal: "Changed prefix of system bot to: %1",
 												successThisThread: "Changed prefix in your box chat to: %1",
-												myPrefix: "👋 Hey %1, did you ask for my prefix?\n➥ 🌐 Global: %2\n➥ 💬 This Chat: %3\nI'm %4 at your service 🫡"
+												myPrefix: "👋 Hey %1, did you ask for my prefix?\n➥ 🌐 Global: %2\n➥ 💬 This Chat: %3\nI'm %4 iam 𝗺𝗮𝗶𝗸𝗼 , nice to meet you 1% "
 								}
 				},
 
