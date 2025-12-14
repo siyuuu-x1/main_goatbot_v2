@@ -8,7 +8,7 @@ module.exports = {
     name: "kiss2",
     aliases: ["ummmah"],
     version: "2.1",
-    author: "Efat",
+    author: "siyuu",
     countDown: 5,
     role: 0,
     shortDescription: "Kiss with custom image",
