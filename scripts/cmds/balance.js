@@ -3,45 +3,53 @@ const path = require("path");
 const { createCanvas, loadImage } = require('canvas');
 const axios = require('axios');
 
-const balanceFile = __dirname + "/coinxbalance.json";
+const balanceFile = path.join(__dirname, "coinxbalance.json");
+const cacheDir = path.join(__dirname, "cache");
 
+// ✅ Ensure balance file exists
 if (!fs.existsSync(balanceFile)) {
   fs.writeFileSync(balanceFile, JSON.stringify({}, null, 2));
 }
 
+// ✅ Ensure cache folder exists
+if (!fs.existsSync(cacheDir)) {
+  fs.mkdirSync(cacheDir, { recursive: true });
+}
+
+// ===== BALANCE FUNCTIONS =====
 function getBalance(userID) {
-  const data = JSON.parse(fs.readFileSync(balanceFile));
-  if (data[userID]?.balance != null) return data[userID].balance;
-  if (userID === "100078049308655") return 10000;
-  return 100;
+  const data = JSON.parse(fs.readFileSync(balanceFile, "utf8"));
+  return data[userID]?.balance ?? 0; // ❌ Default 0 if no balance
 }
 
 function setBalance(userID, balance) {
-  const data = JSON.parse(fs.readFileSync(balanceFile));
-  data[userID] = { balance };
+  const data = JSON.parse(fs.readFileSync(balanceFile, "utf8"));
+  if (!data[userID]) data[userID] = {};
+  data[userID].balance = balance;
   fs.writeFileSync(balanceFile, JSON.stringify(data, null, 2));
 }
 
-// === Format Balance with Extended Units ===
+// ===== FORMAT BALANCE =====
 function formatBalance(num) {
-  if (num >= 1e33) return (num / 1e33).toFixed(1).replace(/\.0$/, '') + "De$"; // Decillion
-  if (num >= 1e30) return (num / 1e30).toFixed(1).replace(/\.0$/, '') + "No$"; // Nonillion
-  if (num >= 1e27) return (num / 1e27).toFixed(1).replace(/\.0$/, '') + "Oc$"; // Octillion
-  if (num >= 1e24) return (num / 1e24).toFixed(1).replace(/\.0$/, '') + "Sp$"; // Septillion
-  if (num >= 1e21) return (num / 1e21).toFixed(1).replace(/\.0$/, '') + "Sx$"; // Sextillion
-  if (num >= 1e18) return (num / 1e18).toFixed(1).replace(/\.0$/, '') + "Qi$"; // Quintillion
-  if (num >= 1e15) return (num / 1e15).toFixed(1).replace(/\.0$/, '') + "Qa$"; // Quadrillion
-  if (num >= 1e12) return (num / 1e12).toFixed(1).replace(/\.0$/, '') + "T$";  // Trillion
-  if (num >= 1e9) return  (num / 1e9).toFixed(1).replace(/\.0$/, '') + "B$";   // Billion
-  if (num >= 1e6) return  (num / 1e6).toFixed(1).replace(/\.0$/, '') + "M$";   // Million
-  if (num >= 1e3) return  (num / 1e3).toFixed(1).replace(/\.0$/, '') + "k$";   // Thousand
+  if (num >= 1e33) return (num / 1e33).toFixed(1).replace(/\.0$/, '') + "De$";
+  if (num >= 1e30) return (num / 1e30).toFixed(1).replace(/\.0$/, '') + "No$";
+  if (num >= 1e27) return (num / 1e27).toFixed(1).replace(/\.0$/, '') + "Oc$";
+  if (num >= 1e24) return (num / 1e24).toFixed(1).replace(/\.0$/, '') + "Sp$";
+  if (num >= 1e21) return (num / 1e21).toFixed(1).replace(/\.0$/, '') + "Sx$";
+  if (num >= 1e18) return (num / 1e18).toFixed(1).replace(/\.0$/, '') + "Qi$";
+  if (num >= 1e15) return (num / 1e15).toFixed(1).replace(/\.0$/, '') + "Qa$";
+  if (num >= 1e12) return (num / 1e12).toFixed(1).replace(/\.0$/, '') + "T$";
+  if (num >= 1e9) return  (num / 1e9).toFixed(1).replace(/\.0$/, '') + "B$";
+  if (num >= 1e6) return  (num / 1e6).toFixed(1).replace(/\.0$/, '') + "M$";
+  if (num >= 1e3) return  (num / 1e3).toFixed(1).replace(/\.0$/, '') + "k$";
   return num + "$";
 }
 
+// ===== MODULE CONFIG =====
 module.exports.config = {
   name: "balance",
   aliases: ["bal"],
-  version: "1.1",
+  version: "1.2",
   author: "siyuu",
   countDown: 5,
   role: 0,
@@ -52,27 +60,30 @@ module.exports.config = {
   }
 };
 
+// ===== ONSTART FUNCTION =====
 module.exports.onStart = async function ({ api, event, args, usersData }) {
   const { threadID, senderID, messageID, mentions } = event;
 
   try {
-    // === Transfer ===
-    if (args[0] && args[0].toLowerCase() === "transfer") {
+    // ===== TRANSFER =====
+    if (args[0]?.toLowerCase() === "transfer") {
       if (!mentions || Object.keys(mentions).length === 0)
-        return api.sendMessage("Please mention someone.", threadID, messageID);
+        return api.sendMessage("❌ Please mention someone.", threadID, messageID);
 
       const targetID = Object.keys(mentions)[0];
-      const amount = parseInt(args[1]);
+      const amount = parseInt(args[2]); // ✅ amount fix
       if (isNaN(amount) || amount <= 0)
-        return api.sendMessage("Invalid amount.", threadID, messageID);
+        return api.sendMessage("❌ Invalid amount.", threadID, messageID);
 
       let senderBal = getBalance(senderID);
       if (senderBal < amount)
-        return api.sendMessage("Not enough balance.", threadID, messageID);
+        return api.sendMessage("❌ Not enough balance.", threadID, messageID);
 
       let receiverBal = getBalance(targetID);
+
       senderBal -= amount;
       receiverBal += amount;
+
       setBalance(senderID, senderBal);
       setBalance(targetID, receiverBal);
 
@@ -80,17 +91,17 @@ module.exports.onStart = async function ({ api, event, args, usersData }) {
       const receiverName = await usersData.getName(targetID);
 
       return api.sendMessage(
-        `Transfer Successful!\n${senderName} → ${receiverName}: ${formatBalance(amount)}\nYour balance: ${formatBalance(senderBal)}`,
+        `✅ Transfer Successful!\n\n👤 ${senderName}\n➡️ ${receiverName}\n💸 Amount: ${formatBalance(amount)}\n\n💰 Your Balance: ${formatBalance(senderBal)}`,
         threadID, messageID
       );
     }
 
-    // === Balance Card ===
+    // ===== BALANCE CARD =====
     const balance = getBalance(senderID);
     const userName = await usersData.getName(senderID);
     const formatted = formatBalance(balance);
 
-    // === Profile Pic ===
+    // ===== PROFILE PICTURE =====
     const picUrl = `https://graph.facebook.com/${senderID}/picture?height=500&width=500&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662`;
     let avatar = null;
     try {
@@ -98,9 +109,8 @@ module.exports.onStart = async function ({ api, event, args, usersData }) {
       avatar = await loadImage(res.data);
     } catch (e) {}
 
-    // === Canvas ===
-    const width = 850;
-    const height = 540;
+    // ===== CANVAS =====
+    const width = 850, height = 540;
     const canvas = createCanvas(width, height);
     const ctx = canvas.getContext('2d');
 
@@ -116,7 +126,7 @@ module.exports.onStart = async function ({ api, event, args, usersData }) {
     ctx.fillStyle = 'rgba(255, 255, 255, 0.08)';
     roundRect(ctx, 20, 20, width - 40, height - 40, 30, true);
 
-    // === Profile Picture (Top Right) ===
+    // ===== PROFILE PICTURE (Top Right) =====
     if (avatar) {
       const size = 110;
       const x = width - size - 50;
@@ -137,22 +147,22 @@ module.exports.onStart = async function ({ api, event, args, usersData }) {
       ctx.stroke();
     }
 
-    // === Bank Name ===
+    // ===== BANK NAME =====
     ctx.font = 'bold 38px "Segoe UI"';
     ctx.fillStyle = '#00d4ff';
     ctx.fillText('GOAT BANK', 60, 100);
 
-    // === Card Number ===
+    // ===== CARD NUMBER =====
     ctx.font = '32px monospace';
     ctx.fillStyle = '#ffffff';
     ctx.fillText('•••• •••• •••• 8456', 60, 180);
 
-    // === Card Holder ===
+    // ===== CARD HOLDER =====
     ctx.font = 'bold 30px "Segoe UI"';
     ctx.fillStyle = '#ffffff';
     ctx.fillText(userName.toUpperCase(), 60, 250);
 
-    // === Valid Thru ===
+    // ===== VALID THRU =====
     ctx.font = '22px "Segoe UI"';
     ctx.fillStyle = '#cccccc';
     ctx.fillText('VALID THRU', 60, 310);
@@ -160,7 +170,7 @@ module.exports.onStart = async function ({ api, event, args, usersData }) {
     ctx.fillStyle = '#ffffff';
     ctx.fillText('12/28', 60, 350);
 
-    // === Balance Box (Right Center) ===
+    // ===== BALANCE BOX =====
     ctx.fillStyle = 'rgba(0, 212, 255, 0.15)';
     roundRect(ctx, 450, 180, 330, 180, 25, true);
 
@@ -175,7 +185,7 @@ module.exports.onStart = async function ({ api, event, args, usersData }) {
 
     ctx.textAlign = 'left';
 
-    // === Chip ===
+    // ===== CHIP =====
     ctx.fillStyle = '#f4d03f';
     roundRect(ctx, 60, 400, 90, 65, 10, true);
     const chipPattern = [
@@ -188,20 +198,17 @@ module.exports.onStart = async function ({ api, event, args, usersData }) {
       ctx.fillRect(60 + px, 400 + py, 15, 15);
     });
 
-    // === Visa Logo ===
+    // ===== VISA LOGO =====
     ctx.font = 'bold 48px Arial';
     ctx.fillStyle = '#ffffff';
     ctx.fillText('VISA', 180, 450);
 
-    // === Contactless Symbol ===
+    // ===== CONTACTLESS =====
     drawContactless(ctx, 300, 430);
 
-    // === Save & Send ===
+    // ===== SAVE & SEND =====
     const buffer = canvas.toBuffer('image/png');
-    const filePath = path.join(__dirname, 'cache', 'balance_perfect.png');
-    if (!fs.existsSync(path.join(__dirname, 'cache'))) {
-      fs.mkdirSync(path.join(__dirname, 'cache'), { recursive: true });
-    }
+    const filePath = path.join(cacheDir, 'balance_perfect.png');
     fs.writeFileSync(filePath, buffer);
 
     await api.sendMessage({
@@ -213,11 +220,11 @@ module.exports.onStart = async function ({ api, event, args, usersData }) {
 
   } catch (error) {
     console.error(error);
-    api.sendMessage("Error generating card!", threadID, messageID);
+    api.sendMessage("❌ Error generating card!", threadID, messageID);
   }
 };
 
-// Helper: Rounded Rect
+// ===== HELPERS =====
 function roundRect(ctx, x, y, w, h, r, fill = false, stroke = false) {
   ctx.beginPath();
   ctx.moveTo(x + r, y);
@@ -234,7 +241,6 @@ function roundRect(ctx, x, y, w, h, r, fill = false, stroke = false) {
   if (stroke) ctx.stroke();
 }
 
-// Contactless Symbol
 function drawContactless(ctx, x, y) {
   ctx.strokeStyle = '#ffffff';
   ctx.lineWidth = 3;
@@ -243,4 +249,4 @@ function drawContactless(ctx, x, y) {
     ctx.arc(x, y, 15 * i, -Math.PI / 3, Math.PI / 3);
     ctx.stroke();
   }
-}
+      }
