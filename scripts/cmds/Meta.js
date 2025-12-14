@@ -72,7 +72,7 @@ module.exports = {
         name: "meta",
         aliases: ["metaai", "metagen"],
         version: "1.0",
-        author: "Neoaz ゐ",
+        author: "siyuu",
         countDown: 20,
         role: 0,
         longDescription: "Generate images using Meta.AI. Returns a grid of 4 images, reply with 1-4 to select one.",
