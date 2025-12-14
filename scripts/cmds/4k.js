@@ -25,7 +25,7 @@ module.exports = {
     name: "4k",
     aliases: ["upscale", "hd", "enhance"],
     version: "1.0",
-    author: "NeoKEX",
+    author: "siyuu",
     countDown: 15,
     role: 0,
     longDescription: "Upscales an image to higher resolution (simulated 4K) using AI.",
