@@ -3,7 +3,7 @@ module.exports = {
     name: "out",
     aliases: ["o"],
     version: "1.0",
-    author: "Saimx69x",
+    author: "siyuuu",
     countDown: 5,
     role: 3,
     shortDescription: {
@@ -19,7 +19,7 @@ module.exports = {
     try {
 
       await api.sendMessage(
-        "𝘖𝘬𝘢𝘺, 𝘐'𝘮 𝘭𝘦𝘢𝘷𝘪𝘯𝘨 𝘵𝘩𝘪𝘴 𝘨𝘳𝘰𝘶𝘱...\n💌 𝘛𝘢𝘬𝘦 𝘤𝘢𝘳𝘦 𝘦𝘷𝘦𝘳𝘺𝘰𝘯𝘦 💖",
+        "ok , bye👋🏻",
         event.threadID
       );
 
