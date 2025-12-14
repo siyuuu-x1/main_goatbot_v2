@@ -3,21 +3,22 @@ const moment = require("moment-timezone");
 module.exports = {
   config: {
     name: "accept",
-    aliases: ['acp'],
-    version: "1.2",
+    aliases: ["acp"],
+    version: "1.3",
     author: "siyuuuu",
     countDown: 8,
     role: 2,
     shortDescription: "Accept users",
-    longDescription: "Accept users with name, ID, timestamp and link",
+    longDescription: "Accept users with list, count and auto accept system",
     category: "Utility",
   },
 
-  onReply: async function ({ message, Reply, event, api, commandName }) {
+  // ================= ON REPLY =================
+  onReply: async function ({ message, Reply, event, api }) {
     const { author, listRequest, messageID } = Reply;
     if (author !== event.senderID) return;
-    const args = event.body.replace(/ +/g, " ").toLowerCase().split(" ");
 
+    const args = event.body.toLowerCase().trim().split(/\s+/);
     clearTimeout(Reply.unsendTimeout);
 
     const form = {
@@ -44,62 +45,60 @@ module.exports = {
       form.fb_api_req_friendly_name = "FriendingCometFriendRequestDeleteMutation";
       form.doc_id = "4108254489275063";
     } else {
-      return api.sendMessage("Please select <add | del> <target number | or \"all\">", event.threadID, event.messageID);
+      return api.sendMessage(
+        "❌ Use: add | del <number | all>",
+        event.threadID,
+        event.messageID
+      );
     }
 
     let targetIDs = args.slice(1);
 
     if (args[1] === "all") {
-      targetIDs = [];
-      for (let i = 1; i <= listRequest.length; i++) targetIDs.push(i);
+      targetIDs = listRequest.map((_, i) => i + 1);
     }
 
-    const newTargetIDs = [];
     const promiseFriends = [];
+    const newTargets = [];
 
     for (const stt of targetIDs) {
       const u = listRequest[parseInt(stt) - 1];
       if (!u) {
-        failed.push(`Can't find stt ${stt} in the list`);
+        failed.push(`STT ${stt}`);
         continue;
       }
+
       form.variables.input.friend_requester_id = u.node.id;
       form.variables = JSON.stringify(form.variables);
-      newTargetIDs.push(u);
       promiseFriends.push(api.httpPost("https://www.facebook.com/api/graphql/", form));
+      newTargets.push(u);
       form.variables = JSON.parse(form.variables);
     }
 
-    for (let i = 0; i < newTargetIDs.length; i++) {
+    for (let i = 0; i < newTargets.length; i++) {
       try {
-        const friendRequest = await promiseFriends[i];
-        if (JSON.parse(friendRequest).errors) {
-          failed.push(newTargetIDs[i].node.name);
+        const res = await promiseFriends[i];
+        if (JSON.parse(res).errors) {
+          failed.push(newTargets[i].node.name);
         } else {
-          success.push(newTargetIDs[i].node.name);
+          success.push(newTargets[i].node.name);
         }
-      } catch (e) {
-        failed.push(newTargetIDs[i].node.name);
+      } catch {
+        failed.push(newTargets[i].node.name);
       }
     }
 
-    if (success.length > 0) {
-      api.sendMessage(
-        `✅ ${args[0] === 'add' ? 'Friend requests sent for' : 'Friend requests deleted for'} ${success.length} user(s):\n\n` +
-        success.map(name => `• ${name}`).join("\n") +
-        (failed.length > 0 ? `\n\n❌ Errors for ${failed.length} user(s):\n` + failed.map(name => `• ${name}`).join("\n") : ""),
-        event.threadID,
-        event.messageID
-      );
-    } else {
-      api.unsendMessage(messageID);
-      return api.sendMessage("Invalid response. Please provide a valid response.", event.threadID);
-    }
-
     api.unsendMessage(messageID);
+
+    return api.sendMessage(
+      `✅ Success: ${success.length}\n❌ Failed: ${failed.length}`,
+      event.threadID
+    );
   },
 
-  onStart: async function ({ event, api, commandName }) {
+  // ================= ON START =================
+  onStart: async function ({ event, api, args, commandName }) {
+
     const form = {
       av: api.getCurrentUserID(),
       fb_api_req_friendly_name: "FriendingCometFriendRequestsRootQueryRelayPreloader",
@@ -108,20 +107,65 @@ module.exports = {
       variables: JSON.stringify({ input: { scale: 3 } })
     };
 
-    const listRequest = JSON.parse(await api.httpPost("https://www.facebook.com/api/graphql/", form)).data.viewer.friending_possibilities.edges;
+    const res = await api.httpPost("https://www.facebook.com/api/graphql/", form);
+    const listRequest = JSON.parse(res).data.viewer.friending_possibilities.edges;
 
-    if (!listRequest.length) return api.sendMessage("No pending friend requests found.", event.threadID);
+    // ===== /acp list =====
+    if (args[0] === "list" && !args[1]) {
+      return api.sendMessage(
+        `👥 Friend Requests: ${listRequest.length}`,
+        event.threadID,
+        event.messageID
+      );
+    }
+
+    // ===== /acp list all =====
+    if (args[0] === "list" && args[1] === "all") {
+      if (!listRequest.length)
+        return api.sendMessage("No pending friend requests.", event.threadID);
+
+      const formAccept = {
+        av: api.getCurrentUserID(),
+        fb_api_req_friendly_name: "FriendingCometFriendRequestConfirmMutation",
+        fb_api_caller_class: "RelayModern",
+        doc_id: "3147613905362928",
+        variables: {}
+      };
+
+      for (const user of listRequest) {
+        formAccept.variables = JSON.stringify({
+          input: {
+            source: "friends_tab",
+            actor_id: api.getCurrentUserID(),
+            friend_requester_id: user.node.id,
+            client_mutation_id: Math.round(Math.random() * 19).toString()
+          },
+          scale: 3,
+          refresh_num: 0
+        });
+        await api.httpPost("https://www.facebook.com/api/graphql/", formAccept);
+      }
+
+      return api.sendMessage(
+        "✅ All complete and added to my friend list now",
+        event.threadID
+      );
+    }
+
+    // ===== DEFAULT LIST SHOW =====
+    if (!listRequest.length)
+      return api.sendMessage("No pending friend requests found.", event.threadID);
 
     let msg = "📋 Pending Friend Requests:\n\n";
-    listRequest.forEach((user, i) => {
-      msg += `📌 ${i + 1}. Name: ${user.node.name}\n`;
-      msg += `🆔 ID: ${user.node.id}\n`;
-      msg += `🔗 Link: ${user.node.url}\n`;
-      msg += `🕒 Time: ${moment(user.time * 1000).tz("Asia/Manila").format("DD/MM/YYYY HH:mm:ss")}\n\n`;
+    listRequest.forEach((u, i) => {
+      msg += `📌 ${i + 1}. ${u.node.name}\n`;
+      msg += `🆔 ${u.node.id}\n`;
+      msg += `🔗 ${u.node.url}\n`;
+      msg += `🕒 ${moment(u.time * 1000).tz("Asia/Manila").format("DD/MM/YYYY HH:mm:ss")}\n\n`;
     });
 
     api.sendMessage(
-      `${msg}Reply to this message with: <add | del> <number | "all">`,
+      `${msg}Reply with: add | del <number | all>`,
       event.threadID,
       (e, info) => {
         global.GoatBot.onReply.set(info.messageID, {
