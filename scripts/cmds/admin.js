@@ -8,7 +8,7 @@ module.exports = {
   config: {
     name: "admin",
     version: "4.1",
-    author: "Refined by SiyamShah",
+    author: "Siyuuu",
     countDown: 5,
     role: 0,
     description: {
