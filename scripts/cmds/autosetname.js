@@ -6,7 +6,7 @@ function checkShortCut(nickname, uid, userName) {
 
 module.exports = {
 	config: {
-		name: "autosetname",
+		name: "siyuu",
 		version: "1.3",
 		author: "NTKhang",
 		cooldowns: 5,
