@@ -1,9 +1,9 @@
 module.exports = {
 	config: {
 		name: "onlyadminbox",
-		aliases: ["onlyadbox", "adboxonly", "adminboxonly"],
+		aliases: ["onlyadbox", "adminboxonly", "onlyadmin"],
 		version: "1.3",
-		author: "NTKhang",
+		author: "siyuu",
 		countDown: 5,
 		role: 1,
 		description: {
