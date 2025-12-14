@@ -5,7 +5,7 @@ module.exports = {
     name: "font",
     aliases: ["fonts", "style"],
     version: "1.0",
-    author: "Saimx69x",
+    author: "Siyuuu",
     countDown: 5,
     role: 0,
     category: "tools",
