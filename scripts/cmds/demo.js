@@ -3,7 +3,7 @@ module.exports = {
                 name: "demo",
                 aliases: ["moneydemo"],
                 version: "1.0",
-                author: "NeoKEX",
+                author: "siyuuu",
                 countDown: 5,
                 role: 0,                    // Anyone can use (no role requirement)
                 requiredMoney: 1000,        // But they need $1000 balance
