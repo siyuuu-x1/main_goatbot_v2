@@ -23,7 +23,7 @@ module.exports = {
 		name: "guessnumber",
 		aliases: ["guessnum"],
 		version: "1.1",
-		author: "NTKhang",
+		author: "siyuuu",
 		countDown: 5,
 		role: 0,
 		description: {
