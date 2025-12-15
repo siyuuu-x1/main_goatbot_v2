@@ -7,7 +7,7 @@ module.exports = {
 	config: {
 		name: "savetext",
 		aliases: ["save"],
-		author: "Tawsif~",
+		author: "siyuu",
 		category: "owner",
 		countDown: 5,
 		role: 0,
