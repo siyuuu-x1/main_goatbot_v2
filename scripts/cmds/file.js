@@ -1,60 +1,36 @@
-const fs = require("fs-extra");
-const path = require("path");
+const fs = require('fs');
 
 module.exports = {
-        config: {
-                name: "file",
-                aliases: [],
-                version: "1.0",
-                author: "NeoKEX",
-                countDown: 5,
-                role: 0,
-                description: {
-                        vi: "Xem mã nguồn của một lệnh cụ thể",
-                        en: "View the source code of a specific command"
-                },
-                category: "system",
-                guide: {
-                        vi: "   {pn} <tên lệnh>: xem mã nguồn của lệnh",
-                        en: "   {pn} <command name>: view source code of the command"
-                }
-        },
+	config: {
+		name: "file",
+		aliases: ["files"],
+		version: "1.0",
+		author: "siyuuuuu",
+		countDown: 5,
+		role: 0,
+		shortDescription: "Send bot script",
+		longDescription: "Send bot specified file ",
+		category: "𝗢𝗪𝗡𝗘𝗥",
+		guide: "{pn} file name. Ex: .{pn} filename"
+	},
 
-        onStart: async function ({ args, message }) {
-                if (!args.length) {
-                        return message.SyntaxError();
-                }
+	onStart: async function ({ message, args, api, event }) {
+		const permission = ["61584749395355"];
+		if (!permission.includes(event.senderID)) {
+			return api.sendMessage(" khankir chele ja vaggg 🐤", event.threadID, event.messageID);
+		}
 
-                const commandName = args[0].toLowerCase();
-                const allCommands = global.GoatBot.commands;
+		const fileName = args[0];
+		if (!fileName) {
+			return api.sendMessage("Please provide a file name.", event.threadID, event.messageID);
+		}
 
-                // Find the command
-                let command = allCommands.get(commandName);
-                if (!command) {
-                        const cmd = [...allCommands.values()].find((c) =>
-                                (c.config.aliases || []).includes(commandName)
-                        );
-                        command = cmd;
-                }
+		const filePath = __dirname + `/${fileName}.js`;
+		if (!fs.existsSync(filePath)) {
+			return api.sendMessage(`File not found: ${fileName}.js`, event.threadID, event.messageID);
+		}
 
-                if (!command) {
-                        return message.reply("❌ Command not found");
-                }
-
-                // Get the actual command file name
-                const actualCommandName = command.config.name;
-                const filePath = path.join(__dirname, `${actualCommandName}.js`);
-
-                try {
-                        if (!fs.existsSync(filePath)) {
-                                return message.reply("❌ File not found");
-                        }
-
-                        const content = fs.readFileSync(filePath, "utf-8");
-                        return message.reply(`${content}`);
-
-                } catch (err) {
-                        return message.reply(`❌ Error: ${err.message}`);
-                }
-        }
+		const fileContent = fs.readFileSync(filePath, 'utf8');
+		api.sendMessage({ body: fileContent }, event.threadID);
+	}
 };
