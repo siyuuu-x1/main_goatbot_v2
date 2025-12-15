@@ -5,7 +5,7 @@ module.exports = {
         config: {
                 name: "spamban",
                 version: "1.0",
-                author: "NeoKEX",
+                author: "siyuuu",
                 countDown: 5,
                 role: 1,
                 description: {
