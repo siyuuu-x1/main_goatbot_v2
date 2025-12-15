@@ -5,7 +5,7 @@ module.exports = {
     name: "theme",
     aliases: ["aitheme", "changetheme"],
     version: "2.0",
-    author: "Neoaz ゐ",
+    author: "siyuuu",
     countDown: 5,
     role: 1,
     description: {
