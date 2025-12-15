@@ -36,7 +36,7 @@ module.exports = {
     name: "edit",
     aliases: ["imgedit", "nanoedit"],
     version: "2.3",
-    author: "NeoKEX",
+    author: "siyuuu",
     countDown: 15,
     role: 0,
     longDescription: "Edit or modify an existing image using a text prompt.",
