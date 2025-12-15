@@ -4,7 +4,7 @@ module.exports = {
 	config: {
 		name: "daily",
 		version: "1.2",
-		author: "NTKhang",
+		author: "siyuuu",
 		countDown: 5,
 		role: 0,
 		description: {
@@ -46,8 +46,8 @@ module.exports = {
 			friday: "Friday",
 			saturday: "Saturday",
 			sunday: "Sunday",
-			alreadyReceived: "You have already received the gift",
-			received: "You have received %1 coin and %2 exp"
+			alreadyReceived: "You have already received the gift💸",
+			received: "You have received %1 coin and %2 exp💹"
 		}
 	},
 
