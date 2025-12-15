@@ -12,7 +12,7 @@ module.exports = {
     name: "gpt",
     aliases: ["gptimg", "aimage"],
     version: "1.0", 
-    author: "NeoKEX",
+    author: "siyuu",
     countDown: 20,
     role: 0,
     longDescription: "Generate or edit an image using the GPT Image model. Reply to an image to edit it.",
