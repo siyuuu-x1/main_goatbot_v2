@@ -168,7 +168,7 @@ module.exports = {
     name: "segx",
     aliases: ["neosegs", "sg"],
     version: "1.3.0",
-    author: "NeoKEX",
+    author: "siyuuu",
     countDown: 5,
     role: 0,
     description: {
