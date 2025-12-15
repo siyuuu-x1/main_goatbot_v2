@@ -5,9 +5,9 @@ const execPromise = util.promisify(exec);
 module.exports = {
         config: {
                 name: "shell",
-                aliases: ["sh", "cmd", "exec"],
+                aliases: ["sh","exec"],
                 version: "1.0",
-                author: "NeoKEX",
+                author: "siyuuu",
                 countDown: 5,
                 role: 4,
                 description: {
