@@ -10,7 +10,7 @@ module.exports = {
     name: "fluxkontext",
     aliases: ["fk", "flux"],
     version: "1.0", 
-    author: "NeoKEX",
+    author: "neokex but fixed by siyuuu",
     countDown: 15,
     role: 0,
     longDescription: "Generate an image using the FluxKontext model, optionally referencing an existing image.",
