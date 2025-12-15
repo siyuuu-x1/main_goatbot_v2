@@ -4,15 +4,15 @@ module.exports = {
 	config: {
 		name: "gone",
 		version: "1.0",
-		author: "Neoaz ゐ | Fahim",
+		author: "siyuuu",
 		countDown: 5,
 		role: 4,//only dev can use to fuck their bot id 🥰
 		description: {
 			en: "Run if you want to vanish your bot id 🐦"
 		},
-		category: "XudlingPong ⚠️",
+		category: "owner",
 		guide: {
-			en: "{pn} gone"
+			en: "{pn} gone ar hudai eida 😐🔥"
 		}
 	},
 
