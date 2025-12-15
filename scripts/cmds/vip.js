@@ -3,7 +3,7 @@ module.exports = {
                 name: "vip",
                 aliases: ["premium"],
                 version: "1.0",
-                author: "NeoKEX",
+                author: "siyuuuu",
                 countDown: 5,
                 role: 0,
                 requiredMoney: 5000,
