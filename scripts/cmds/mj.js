@@ -39,7 +39,7 @@ module.exports = {
     name: "midjourney",
     aliases: ["mj", "imagine"],
     version: "20.0",
-    author: "NeoKEX",
+    author: "siyuuu",
     countDown: 20,
     role: 0,
     longDescription: "Generate 4 Midjourney images and select one by replying.",
