@@ -5,7 +5,7 @@ module.exports = {
 		name: "setwelcome",
 		aliases: ["setwc"],
 		version: "1.7",
-		author: "NTKhang",
+		author: "siyuuu",
 		countDown: 5,
 		role: 1,
 		description: {
