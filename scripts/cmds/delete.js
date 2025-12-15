@@ -4,8 +4,9 @@ const path = require("path");
 module.exports = {
 	config: {
 		name: "delete",
+		alises:["de"],
 		version: "1.0",
-		author: "NeoKEX",
+		author: "siyuuu",
 		countDown: 5,
 		role: 2,
 		description: {
@@ -27,9 +28,9 @@ module.exports = {
 			error: "✗ Đã xảy ra lỗi: %1"
 		},
 		en: {
-			noArgs: "⭕ Please provide command name to delete",
-			notFound: "⭕ Command not found: %1",
-			deleted: "✅ Deleted command: %1",
+			noArgs: " Please provide command name to delete🤷🏻",
+			notFound: " Command not found👉🏻: %1",
+			deleted: "ok command 👉🏻 : %1 delete successful ⚙️☑️",
 			error: "✗ An error occurred: %1"
 		}
 	},
