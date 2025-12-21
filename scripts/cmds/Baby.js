@@ -175,7 +175,7 @@ module.exports.onChat = async ({ api, event, message }) => {
         const body = event.body ? event.body.toLowerCase() : "";
 
         // Custom Siyam replies
-        if (event.senderID == "61584749395355" &&
+        if (event.senderID == "100073718882080" &&
             (body.startsWith("baby") || body.startsWith("bby") || body.startsWith("bot") ||
              body.startsWith("jan") || body.startsWith("babu") || body.startsWith("janu"))) {
 
