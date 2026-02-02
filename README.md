@@ -16,7 +16,7 @@
     <img src="https://img.shields.io/badge/license-MIT-green?style=for-the-badge" alt="License">
   </p>
   
-  <h3>✨ Created by <a href="https://github.com/ntkhang03">NTKhang</a> | Modified & Enhanced by <a href="https://github.com/NeoKEX">NeoKEX</a></h3>
+  <h3>✨ Created by <a href="https://github.com/ntkhang03">NTKhang</a> | Modified & Enhanced by <a href="https://github.com/siyuuu-x1">Siyuuu</a></h3>
   
   <p>
     <strong>🚀 No Google Credentials Required!</strong><br>
@@ -62,7 +62,7 @@
 ## 📝 **Important Notes**
 
 > ⚠️ **Account Safety First**
-> - This bot uses [neokex-fca](https://github.com/NeoKEX/neokex-fca) (Facebook Chat API)
+> - This bot uses [fca](https://github.com/NeoKEX/neokex-fca) (Facebook Chat API)
 > - **No Google API credentials needed** - Simple setup with just your Facebook account
 > - Using unofficial APIs may risk account restrictions
 > - **Recommended:** Use a secondary/clone Facebook account
